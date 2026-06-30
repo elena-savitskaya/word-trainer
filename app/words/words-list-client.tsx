@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { WordItem } from "./word-item";
+import { BrowseCard } from "./browse-card";
 import { WORD_STATUS } from "@/lib/constants";
 import { WordsListHeader } from "./words-list-header";
 import { WordsTabs } from "./words-tabs";
@@ -16,6 +17,7 @@ export function WordsListClient({ initialWords }: WordsListClientProps) {
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "cards">("list");
   const [isMounted, setIsMounted] = useState(false);
 
   const searchParams = useSearchParams();
@@ -39,11 +41,17 @@ export function WordsListClient({ initialWords }: WordsListClientProps) {
     // Sort persistence
     const savedSort = localStorage.getItem("words_sort_by");
     const validSorts = ["newest", "oldest", "az", "za"];
-    
+
     if (savedSort && validSorts.includes(savedSort)) {
       setSortBy(savedSort);
     }
-    
+
+    // View mode persistence
+    const savedViewMode = localStorage.getItem("words_view_mode");
+    if (savedViewMode === "list" || savedViewMode === "cards") {
+      setViewMode(savedViewMode);
+    }
+
     setIsMounted(true);
   }, [searchParams]);
 
@@ -56,6 +64,11 @@ export function WordsListClient({ initialWords }: WordsListClientProps) {
   const handleSortChange = (value: string) => {
     setSortBy(value);
     localStorage.setItem("words_sort_by", value);
+  };
+
+  const handleViewModeChange = (value: "list" | "cards") => {
+    setViewMode(value);
+    localStorage.setItem("words_view_mode", value);
   };
 
   // Memoized counts for performance
@@ -112,13 +125,15 @@ export function WordsListClient({ initialWords }: WordsListClientProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-6">
-        <WordsListHeader 
-          count={processedWords.length} 
-          activeTab={activeTab} 
+        <WordsListHeader
+          count={processedWords.length}
+          activeTab={activeTab}
           sortBy={sortBy}
           onSortChange={handleSortChange}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          viewMode={viewMode}
+          onViewModeChange={handleViewModeChange}
         />
         
         <WordsTabs 
@@ -130,13 +145,19 @@ export function WordsListClient({ initialWords }: WordsListClientProps) {
       <div className="space-y-3">
         {processedWords.length === 0 ? (
           <WordsEmptyState activeTab={activeTab} />
+        ) : viewMode === "cards" ? (
+          <div className="grid grid-cols-1 min-[520px]:grid-cols-2 sm:grid-cols-3 gap-3">
+            {processedWords.map((item) => (
+              <BrowseCard key={item.id} word={item} />
+            ))}
+          </div>
         ) : (
           <div className="flex flex-col gap-3">
             {processedWords.map((item) => (
-              <WordItem 
-                key={item.id} 
-                word={item} 
-                showRepeatButton={activeTab === "learned"} 
+              <WordItem
+                key={item.id}
+                word={item}
+                showRepeatButton={activeTab === "learned"}
               />
             ))}
           </div>

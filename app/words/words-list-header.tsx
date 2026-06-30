@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, ArrowUpDown, Calendar, ArrowDownAZ, ArrowUpZA, Search, X } from "lucide-react";
+import { Plus, ArrowUpDown, Calendar, ArrowDownAZ, ArrowUpZA, Search, X, Layers, List } from "lucide-react";
 import { GradientInput } from "@/components/ui/gradient-input";
 import { Button } from "@/components/ui/button";
-import { getUkrainianPlural } from "@/lib/utils";
+import { cn, getUkrainianPlural } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,8 @@ interface WordsListHeaderProps {
   onSortChange: (value: string) => void;
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  viewMode: "list" | "cards";
+  onViewModeChange: (value: "list" | "cards") => void;
 }
 
 export function WordsListHeader({
@@ -27,7 +29,9 @@ export function WordsListHeader({
   sortBy,
   onSortChange,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  viewMode,
+  onViewModeChange,
 }: WordsListHeaderProps) {
   const wordLabel = getUkrainianPlural(count, ["слово", "слова", "слів"]);
   const statusLabel =
@@ -81,15 +85,36 @@ export function WordsListHeader({
           </DropdownMenu>
         </div>
 
-        <Button
-          asChild
-          variant="ghost"
-          className="w-12 h-12 rounded-full p-0 bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 group"
-        >
-          <Link href="/add-word" title="Додати слово">
-            <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onViewModeChange(viewMode === "list" ? "cards" : "list")}
+            title={viewMode === "list" ? "Режим карток" : "Режим списку"}
+            className={cn(
+              "w-12 h-12 rounded-full transition-all duration-300",
+              viewMode === "cards"
+                ? "bg-primary/10 text-primary hover:bg-primary/20"
+                : "text-muted-foreground/70 hover:bg-primary/10 hover:text-primary"
+            )}
+          >
+            {viewMode === "list" ? (
+              <Layers className="w-6 h-6" />
+            ) : (
+              <List className="w-6 h-6" />
+            )}
+          </Button>
+
+          <Button
+            asChild
+            variant="ghost"
+            className="w-12 h-12 rounded-full p-0 bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-300 group"
+          >
+            <Link href="/add-word" title="Додати слово">
+              <Plus className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="relative group">
