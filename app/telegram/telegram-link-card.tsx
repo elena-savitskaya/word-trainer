@@ -45,10 +45,7 @@ export function TelegramLinkCard({ isLinked }: { isLinked: boolean }) {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground text-center">
-            Надішліть боту слово і переклад двома рядками, наприклад:
-          </p>
-          <p className="text-sm text-center font-mono mt-2 bg-background/40 rounded-xl py-2">
-            school<br />школа
+            Бот сам запитає слово, потім переклад — і запропонує зберегти.
           </p>
         </CardContent>
         <CardFooter className="p-6 bg-muted/20 border-t border-foreground/5">
@@ -70,7 +67,7 @@ export function TelegramLinkCard({ isLinked }: { isLinked: boolean }) {
     <Card className="border-none shadow-xl ring-1 ring-foreground/5 rounded-3xl overflow-hidden bg-muted/30">
       <CardHeader>
         <CardDescription className="text-center font-medium">
-          Прив&apos;яжіть Telegram, щоб додавати слова прямо з чату — двома рядками: слово, потім переклад.
+          Прив&apos;яжіть Telegram, щоб додавати слова прямо з чату — бот покроково запитає слово і переклад.
         </CardDescription>
       </CardHeader>
       <CardFooter className="p-6 bg-muted/20 border-t border-foreground/5">

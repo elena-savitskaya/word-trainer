@@ -89,6 +89,30 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_sessions: {
+        Row: {
+          telegram_chat_id: number
+          state: string
+          pending_word: string | null
+          pending_translation: string | null
+          updated_at: string
+        }
+        Insert: {
+          telegram_chat_id: number
+          state?: string
+          pending_word?: string | null
+          pending_translation?: string | null
+          updated_at?: string
+        }
+        Update: {
+          telegram_chat_id?: number
+          state?: string
+          pending_word?: string | null
+          pending_translation?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
