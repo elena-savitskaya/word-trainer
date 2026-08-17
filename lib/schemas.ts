@@ -7,8 +7,9 @@ export const ExampleSchema = z.object({
 
 export const TranslationResultSchema = z.object({
   translation: z.string().min(1, "Translation is required"),
-  examples: z.array(ExampleSchema).default([]),
-  correctedWord: z.string().nullable().optional(),
+  examples: z.array(ExampleSchema),
+  correctedWord: z.string().nullable(),
+  error_message: z.string().nullable(),
 });
 
 export const WordFormSchema = z.object({

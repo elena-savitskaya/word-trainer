@@ -1,5 +1,5 @@
 import { createGroq } from "@ai-sdk/groq";
-import { generateText } from "ai";
+import { APICallError, Output, generateText } from "ai";
 import { TranslationResultSchema } from "@/lib/schemas";
 import { z } from "zod";
 
@@ -38,29 +38,25 @@ export class AIService {
     `;
 
     try {
-      const { text } = await generateText({
-        model: groq("llama-3.1-8b-instant"),
+      const { output: object } = await generateText({
+        model: groq("openai/gpt-oss-20b"),
+        output: Output.object({ schema: TranslationResultSchema }),
         system: systemPrompt,
         prompt: `Input: "${word.trim()}"`,
       });
-
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-         throw new Error("AI returned invalid response format");
-      }
-
-      const object = JSON.parse(jsonMatch[0]);
 
       if (object.error_message) {
         return { error: object.error_message };
       }
 
-      const validated = TranslationResultSchema.parse(object);
-      return { data: validated };
+      return { data: object };
     } catch (err: unknown) {
       console.error("AIService Error:", err);
       if (err instanceof z.ZodError) {
         return { error: "ШІ повернув некоректні дані. Спробуйте інше слово." };
+      }
+      if (APICallError.isInstance(err)) {
+        return { error: "Сервіс перекладу тимчасово недоступний (помилка API). Спробуйте пізніше." };
       }
       return { error: "Помилка роботи штучного інтелекту. Спробуйте ще раз пізніше." };
     }
