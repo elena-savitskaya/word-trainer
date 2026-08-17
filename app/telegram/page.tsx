@@ -1,20 +1,8 @@
-import { redirect } from "next/navigation";
-import { getRequiredServerUser } from "@/lib/utils/get-required-server-user";
-import { TelegramLinkCard } from "./telegram-link-card";
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
+import { TelegramLinkSection } from "./telegram-link-section";
 
-export default async function TelegramPage() {
-  const { user, supabase } = await getRequiredServerUser();
-
-  if (!user) {
-    redirect("/auth/login");
-  }
-
-  const { data: link } = await supabase
-    .from("telegram_links")
-    .select("telegram_chat_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
+export default function TelegramPage() {
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-8 py-8 w-full px-4 sm:px-5">
       <div className="flex flex-col gap-2 items-center justify-center text-center">
@@ -25,7 +13,9 @@ export default async function TelegramPage() {
           Додавайте слова прямо з Telegram, без відкриття сайту.
         </p>
       </div>
-      <TelegramLinkCard isLinked={!!link} />
+      <Suspense fallback={<Loader />}>
+        <TelegramLinkSection />
+      </Suspense>
     </div>
   );
 }
