@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,21 @@ import { toast } from "sonner";
 export function TelegramLinkCard({ isLinked }: { isLinked: boolean }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  // Linking happens in the Telegram app, outside this tab — when the user
+  // comes back, re-check the real status instead of showing a stale button.
+  useEffect(() => {
+    if (isLinked) return;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        router.refresh();
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [isLinked, router]);
 
   function handleLink() {
     startTransition(async () => {
