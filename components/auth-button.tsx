@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Send } from "lucide-react";
 import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
@@ -27,6 +28,11 @@ export async function AuthButton() {
   return (
     <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto px-4 py-3 md:p-0">
       <span className="text-sm font-bold md:font-medium whitespace-nowrap">Привіт, {name}!</span>
+      <Button asChild variant="outline" className="w-full md:w-auto rounded-xl h-12 px-6 font-bold shadow-sm gap-2">
+        <Link href="/telegram">
+          <Send className="w-4 h-4" /> Telegram
+        </Link>
+      </Button>
       <LogoutButton />
     </div>
   );
