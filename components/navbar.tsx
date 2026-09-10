@@ -16,7 +16,7 @@ export function Navbar({ hasEnvVars }: NavbarProps) {
       <div className="w-full max-w-5xl flex justify-between items-center py-3 px-4 sm:px-5 text-sm">
         <div className="flex gap-5 items-center font-semibold">
           <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="Logo" width={65} height={65} />
+            <Image src="/logo.png" alt="Logo" width={65} height={65} priority/>
           </Link>
         </div>
 
