@@ -33,7 +33,10 @@ export async function addWordAction(prevState: ActionState, formData: FormData):
   let examples;
   try {
     examples = JSON.parse(examplesJson);
-    const translationValidation = TranslationResultSchema.safeParse({ translation, examples });
+    const translationValidation = TranslationResultSchema.pick({ translation: true, examples: true }).safeParse({
+      translation,
+      examples,
+    });
     if (!translationValidation.success) {
       return { error: "Некоректні дані перекладу" };
     }
